@@ -1,0 +1,5 @@
+  - name: Instalar pacotes do Oracle ASM - kmod-oracleasm
+    yum: state=latest disable_gpg_check=yes  name=kmod-oracleasm
+
+  - name: Instalar pacotes do Oracle ASM - oracleasm-support
+    yum: state=latest disable_gpg_check=yes  name=/home/bd_srvs_comum/OraInstall/oracleasm_libs_RHEL/oracleasm-support-2.1.8-3.el7.x86_64.rpm

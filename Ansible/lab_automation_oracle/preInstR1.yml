@@ -1,0 +1,48 @@
+---
+- hosts: oralab2
+  vars:
+   oracle_base: /u01/app/oracle
+   oracle_home: /u01/app/oracle/product/12.1.0.2/db_1
+   patch_dir: /u01/stage
+  remote_user: root
+  tasks:
+
+  - name: install oracle-rdbms-server-12cR1-preinstall package
+    action: yum name="oracle-database-server-12cR1-preinstall" state=present
+
+  - name: install libselinux-python
+    action: yum name=libselinux-python state=installed
+
+  - name: set selinux to permissive mode
+    action: selinux policy=targeted state=permissive
+
+  - name: hosts ajust
+    action: lineinfile dest=/etc/hosts line='172.16.102.159  oralab2.cp.totvs.com.br   oralab2' state=present
+
+  - name: stop firewall
+    action: service name=iptables state=stopped
+
+  - name: disable firewall
+    action: service name=iptables enabled=no
+
+  - name: create OH directory
+    action: file dest=/u01/app/oracle/product/12.1.0.2/db_1 state=directory owner=oracle group=oinstall
+
+  - name: create staging directory
+    action: file dest={{ patch_dir }} state=directory owner=oracle group=oinstall
+
+  - name: copy oracle installation file 1 to the staging directory
+    action: copy src=/TOTVSSP12/disks/12.1/linuxamd64_12102_database_1of2.zip dest=/u01/stage/linuxamd64_12102_database_1of2.zip owner=oracle group=oinstall
+    
+  - name: copy oracle installation file 2 to the staging directory   
+    action: copy src=/TOTVSSP12/disks/12.1/linuxamd64_12102_database_2of2.zip dest=/u01/stage/linuxamd64_12102_database_2of2.zip owner=oracle group=oinstall
+
+  - name: unzip oracle installation file 1
+    action: unarchive src={{ patch_dir }}/linuxamd64_12102_database_1of2.zip dest={{ patch_dir }} remote_src=yes owner=oracle group=oinstall
+    
+  - name: unzip oracle installation file 2
+    action: unarchive src={{ patch_dir }}/linuxamd64_12102_database_2of2.zip dest={{ patch_dir }} remote_src=yes owner=oracle group=oinstall
+
+  - name: copy oracle response file
+    action: copy src=/home/oracle/ansible/12cR1.rsp dest=/u01/stage/ owner=oracle group=oinstall
+

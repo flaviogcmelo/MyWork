@@ -1,0 +1,21 @@
+- hosts:  hosts-oracle
+  gather_facts: False
+  become: True
+  become_user: root
+  tasks:
+
+  - name: Cria GRID_BASE
+    file: path=/u01/app/grid state=directory
+
+  - name: Cria GRID_HOME
+    file: path=/u01/app/18.0.0/grid state=directory
+
+  - name: Cria ORACLE_HOME
+    file: path=/u01/app/oracle/product/18/dbhome_1 state=directory
+
+  - name: Altera owner, grupo e modo para o diretorio /u01
+    file: path=/u01 owner=grid group=oinstall mode=0775 recurse=yes
+
+  - name: Altera owner e grupo para o diretorio /u01/app/oracle
+    file: path=/u01/app/oracle owner=oracle group=oinstall mode=0775 recurse=yes
+

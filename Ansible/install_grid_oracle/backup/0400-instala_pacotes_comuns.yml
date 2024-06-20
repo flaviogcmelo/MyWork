@@ -1,0 +1,66 @@
+- hosts:  hosts-oracle
+  become: True
+  become_user: root
+  tasks:
+
+  - name: Habilita o multilib_policy em /etc/yum.conf
+    lineinfile:
+     path: /etc/yum.conf
+     regexp: '.*multilib_policy.*'
+     insertafter: '^installonly_limit.*'
+     line: 'multilib_policy=all'
+     backup: yes
+
+  - name: Instalar pacote nspr
+    yum: state=latest disable_gpg_check=yes  name="{{item}}"
+    with_items:
+      - nspr
+      - libstdc++*
+      - libgcc*
+      - libc*
+      - glibc.i686
+      - nfs-utils
+      - net-tools
+      - ntp
+      - vim
+      - psmisc
+      - binutils
+      - compat-libcap1
+      - compat-libstdc++-33
+      - gcc
+      - gcc-c++
+      - glibc
+      - glibc-devel
+      - ksh
+      - libgcc
+      - libstdc++
+      - libstdc++-devel
+      - libaio
+      - libaio-devel
+      - libXext
+      - libXtst
+      - libX11
+      - libXau
+      - libxcb
+      - libXi
+      - make
+      - sysstat
+      - libXmu
+      - libXt
+      - libXv
+      - libXxf86dga
+      - libdmx
+      - libXxf86misc
+      - libXxf86vm
+      - xorg-x11-utils
+      - xorg-x11-xauth
+
+  - name: Instalacao pacotes ASM
+    include: 0401-instala_pacotes_asm_OL7.yml
+    when: ansible_distribution=="OracleLinux"
+    tags: asmlibs
+
+  - name: Instalacao pacote preinstall da versão 18
+    include: 06-instala_oracle-database-preinstall-18c.yml
+    when: ansible_distribution=="OracleLinux"
+    tags: oracle-preinstall

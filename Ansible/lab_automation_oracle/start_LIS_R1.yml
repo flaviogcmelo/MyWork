@@ -1,0 +1,11 @@
+---
+- hosts: oralab2
+  vars:
+    oracle_base: /u01/app/oracle
+    oracle_home: /u01/app/oracle/product/12.1.0.2/db_1/
+    patch_dir: /u01/stage
+  remote_user: oracle
+  tasks:
+ 
+  - name: executing netca
+    action: shell export ORACLE_HOME={{ oracle_home }}; $ORACLE_HOME/bin/lsnrctl start

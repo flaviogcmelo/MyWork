@@ -1,0 +1,6 @@
+  - name: Instalar pacote nspr
+    yum: state=latest disable_gpg_check=yes  name="{{item}}"
+    with_items:
+      - oracleasm-support
+      - kmod-oracleasm
+      - /home/bd_srvs_comum/OraInstall/oracleasm_libs_OL7/oracleasmlib-2.0.12-1.el7.x86_64.rpm

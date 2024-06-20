@@ -1,0 +1,6 @@
+  - name: Instalar pacote OracleASM for OL8
+    yum: state=latest disable_gpg_check=yes  name="{{item}}"
+    with_items:
+      - /home/bd_srvs_comum/OraInstall/oracleasm_libs_OL8/oracleasm-support-2.1.12-1.el8.x86_64.rpm
+      - /home/bd_srvs_comum/OraInstall/oracleasm_libs_OL8/oracleasmlib-2.0.17-1.el8.x86_64.rpm
+

@@ -1,0 +1,11 @@
+---
+- hosts: oralab2
+  vars:
+    oracle_base: /u01/app/oracle
+    oracle_home: /u01/app/oracle/product/12.2.0.1/db_1/
+    patch_dir: /u01/stage
+  remote_user: oracle
+  tasks:
+ 
+  - name: execute run installer
+    action: shell export ORACLE_HOME={{ oracle_home }}; /u01/stage/database/runInstaller -ignoreSysPrereqs -ignorePrereq -waitforcompletion -showProgress -silent -responseFile /u01/stage/12cR2.rsp oracle.install.option=INSTALL_DB_SWONLY ORACLE_HOSTNAME=`hostname` UNIX_GROUP_NAME=oinstall INVENTORY_LOCATION=/u01/app/oraInventory SELECTED_LANGUAGES=en ORACLE_HOME=/u01/app/oracle/product/12.2.0.1/db_1 ORACLE_BASE=/u01/app/oracle oracle.install.db.InstallEdition=EE oracle.install.db.OSDBA_GROUP=dba oracle.install.db.OSBACKUPDBA_GROUP=dba oracle.install.db.OSDGDBA_GROUP=dba oracle.install.db.OSKMDBA_GROUP=dba oracle.install.db.OSRACDBA_GROUP=dba SECURITY_UPDATES_VIA_MYORACLESUPPORT=false DECLINE_SECURITY_UPDATES=true

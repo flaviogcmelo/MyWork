@@ -1,0 +1,8 @@
+---
+- hosts: oralab2
+  tasks:
+    - name: install libselinux-python
+      action: yum name=libselinux-python state=installed
+      
+    - name: change selinux
+      action: selinux policy=targeted state=permissive

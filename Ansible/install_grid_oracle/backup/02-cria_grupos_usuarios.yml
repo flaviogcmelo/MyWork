@@ -1,0 +1,66 @@
+- hosts:  hosts-oracle
+  gather_facts: False
+  become: True
+  become_user: root
+  serial: 50%
+  tasks:
+
+  - name: del user "oracle"
+    user: name=oracle state=absent remove=yes
+
+  - name: del user "grid"
+    user: name=grid state=absent remove=yes
+
+  - name: del group "oinstall"
+    group: name=oinstall state=absent
+
+  - name: del group "asmadmin"
+    group: name=asmadmin state=absent
+
+  - name: del group "asmdba"
+    group: name=asmdba state=absent
+
+  - name: del group "asmoper"
+    group: name=asmoper state=absent
+
+  - name: del group "dba"
+    group: name=dba state=absent
+
+  - name: del group "oper"
+    group: name=oper state=absent
+
+  - name: del group "oracle"
+    group: name=oracle state=absent
+
+  - name: add group "oinstall" gid=54321
+    group: gid=54321 name=oinstall
+
+  - name: add group "dba" gid=54322
+    group: gid=54322 name=dba
+
+  - name: add group "oper" gid=54323
+    group: gid=54323 name=oper
+
+  - name: add group "backupdba" gid=54324
+    group: gid=54324 name=backupdba
+
+  - name: add group "dgdba" gid=54325
+    group: gid=54325 name=dgdba
+
+  - name: add group "kmdba" gid=54326
+    group: gid=54326 name=kmdba
+
+  - name: add group "asmdba" gid=54327
+    group: gid=54327 name=asmdba
+
+  - name: add group "asmaoper" gid=54328
+    group: gid=54328 name=asmoper
+
+  - name: add group "asmadmin" gid=54329
+    group: gid=54329 name=asmadmin
+
+  - name: add user "oracle" uid=54321
+    user: uid=54321 name=oracle group=oinstall home=/home/oracle groups=dba,oper,asmdba,asmadmin,asmoper password="qwe123" force=yes
+
+  - name: add user "grid" uid=54322
+    user: uid=54322 name=grid group=oinstall home=/home/grid groups=asmadmin,asmdba,asmoper,dba password="qwe123" force=yes

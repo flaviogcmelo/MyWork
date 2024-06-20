@@ -1,0 +1,28 @@
+# Desabilita SELinux e servico Firewalld
+- hosts:  hosts-oracle
+  gather_facts: False
+  become: True
+  become_user: root
+  serial: 50%
+  tasks:
+
+  - name: Desabilita SELinux
+    selinux:
+     state: disabled
+    notify:
+    - restart host
+
+  - name: Desabilita servico Firewalld
+    systemd:
+      name: firewalld
+      enabled: no
+      masked: yes
+
+  - name: Para servico Firewalld
+    systemd:
+      name: firewalld
+      state: stopped
+
+  handlers:
+  - name: restart host
+    shell: shutdown -r +1

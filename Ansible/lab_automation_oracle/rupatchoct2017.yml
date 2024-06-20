@@ -1,0 +1,59 @@
+---
+- hosts: oralab2
+  vars:
+   oracle_base: /u01/app/oracle
+   oracle_home: /u01/app/oracle/product/12.2.0.1/db_1
+   patch_dir: /u01/stage
+  remote_user: oracle
+  tasks:
+
+  - name: create directory for installation files
+    action: file dest={{ patch_dir }} state=directory owner=oracle group=oinstall
+
+  - name: copy opatch and ru
+    copy: src=/home/oracle/{{ item }} dest={{ patch_dir }} owner=oracle group=oinstall mode=0644
+    with_items:
+      - p6880880_121010_Linux-x86-64.zip
+      - p26636004_122010_Linux-x86-64.zip
+
+  - name: copy rsp and sql files
+    copy: src=/home/oracle/ansible/{{ item }} dest={{ patch_dir }} owner=oracle group=oinstall mode=0644
+    with_items:
+      - startup_upg.sql
+      - startup.sql
+      - shutdown.sql
+      - ocm.rsp
+
+  - name: install opatch in database home
+    action: unarchive src={{ patch_dir }}/p6880880_121010_Linux-x86-64.zip dest={{ oracle_home }} remote_src=yes
+
+  - name: unzip combo patch (ru+ovjm)
+    action: unarchive src={{ patch_dir }}/p26636004_122010_Linux-x86-64.zip dest={{ patch_dir }} remote_src=yes
+
+  - name: stop listener
+    action: shell export ORACLE_HOME={{ oracle_home }}; {{ oracle_home }}/bin/lsnrctl stop 
+
+  - name: shutdown db
+    action: shell export ORACLE_HOME={{ oracle_home }}; export ORACLE_SID=cdb3; {{ oracle_home }}/bin/sqlplus / as sysdba @{{ patch_dir }}/shutdown.sql
+
+  - name: opatch apply ru
+    action: shell export ORACLE_HOME={{ oracle_home }}; cd {{ patch_dir }}/26636004/26710464 ; $ORACLE_HOME/OPatch/opatch apply -silent -ocmrf {{ patch_dir }}/ocm.rsp
+
+  - name: opatch apply ojvm
+    action: shell export ORACLE_HOME={{ oracle_home }}; cd {{ patch_dir }}/26636004/26635944 ; $ORACLE_HOME/OPatch/opatch apply -silent -ocmrf {{ patch_dir }}/ocm.rsp
+
+  - name: startup upgrade
+    action: shell export ORACLE_HOME={{ oracle_home }}; export ORACLE_SID=cdb3; {{ oracle_home }}/bin/sqlplus / as sysdba @{{ patch_dir }}/startup_upg.sql
+
+  - name: running datapatch
+    action: shell export ORACLE_HOME={{ oracle_home }}; export ORACLE_SID=cdb3; cd {{ oracle_home }}/OPatch; ./datapatch -verbose
+
+  - name: shutdown db
+    action: shell export ORACLE_HOME={{ oracle_home }}; export ORACLE_SID=cdb3; {{ oracle_home }}/bin/sqlplus / as sysdba @{{ patch_dir }}/shutdown.sql
+
+  - name: starting listener
+    action: shell export ORACLE_HOME={{ oracle_home }}; {{ oracle_home }}/bin/lsnrctl start
+
+  - name: startup normal
+    action: shell export ORACLE_HOME={{ oracle_home }}; export ORACLE_SID=cdb3; {{ oracle_home }}/bin/sqlplus / as sysdba @{{ patch_dir }}/startup.sql
+

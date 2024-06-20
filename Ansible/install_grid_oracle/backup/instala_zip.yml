@@ -1,0 +1,18 @@
+- hosts:  coleta_sar
+  become: True
+  become_user: root
+  tasks:
+
+  - name: Habilita o multilib_policy em /etc/yum.conf
+    lineinfile:
+     path: /etc/yum.conf
+     regexp: '.*multilib_policy.*'
+     insertafter: '^installonly_limit.*'
+     line: 'multilib_policy=all'
+     backup: yes
+
+  - name: Instala pacotes
+    yum: state=latest disable_gpg_check=yes  name="{{item}}"
+    loop:
+      - zip
+      - vim
