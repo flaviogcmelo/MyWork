@@ -51,3 +51,29 @@ SELECT Sum(Decode(a.name, 'consistent gets', a.value, 0)) "Consistent Gets",
              Sum(Decode(a.name, 'db block gets', a.value, 0))))
              *100,2) "Hit Ratio %"
 FROM   v$sysstat a;
+
+
+-- -----------------------------------------------------------------------------------
+-- File Name    : 
+-- Author       : Flávio Melo
+-- Description  : Script para verificar se o PDB é compativel para conversão
+-- Comments     : 
+-- Requirements : Acesso a DBMS_PDB.
+-- Call Syntax  : 
+-- Last Modified: 24/06/2024
+-- -----------------------------------------------------------------------------------
+SET SERVEROUTPUT ON
+DECLARE
+  l_result BOOLEAN;
+BEGIN
+  l_result := DBMS_PDB.check_plug_compatibility(
+                pdb_descr_file => '/home/oracle/pdb1.pdb',
+                pdb_name       => 'datamasking');
+
+  IF l_result THEN
+    DBMS_OUTPUT.PUT_LINE('compatible');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('incompatible');
+  END IF;
+END;
+/
