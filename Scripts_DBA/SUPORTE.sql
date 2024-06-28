@@ -1,3 +1,7 @@
+-- Desbloqueio e alteração das senhas dos usuários dbsnmp e asmsnmp
+alter user dbsnmp identified by "Snmp#monitor01" account unlock;
+alter user asmsnmp identified by "Snmp#monitor01" account  unlock;
+
 -- Origem dos scripts
 -- https://oracle-base.com/dba/scripts
 -- -----------------------------------------------------------------------------------
@@ -77,3 +81,30 @@ BEGIN
   END IF;
 END;
 /
+
+
+-- -----------------------------------------------------------------------------------
+-- File Name    : 
+-- Author       : Flávio Melo
+-- Description  : Alternar entre modos Archive e NoArchive
+-- Comments     : 
+-- Requirements : Acesso como SYSDBA
+-- Call Syntax  : 
+-- Last Modified: 24/06/2024
+-- -----------------------------------------------------------------------------------
+sqlplus / as sysdba << noarchive
+shutdown immediate
+startup mount
+alter database noarchive;
+alter database open;
+alter pluggable database devvdb open;
+noarchive
+
+
+sqlplus / as sysdba << archive
+shutdown immediate
+startup mount
+alter database archive;
+alter database open;
+alter pluggable database devvdb open;
+archive
