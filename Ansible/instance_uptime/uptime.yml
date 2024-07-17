@@ -1,4 +1,4 @@
-- name: Adiciona chave pÃºblico no arquivo "authorized_keys"
+- name: Adiciona chave pública no arquivo "authorized_keys"
   authorized_keys: user=root
                    exclusive=no
                    key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
